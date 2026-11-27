@@ -2,11 +2,6 @@ extends RefCounted
 class_name KenneyCityAssets
 
 const Roads = preload("res://scripts/assets/kenney_road_data.gd")
-const CitizenA = preload("res://scripts/assets/citizen_data_a.gd")
-const CitizenB = preload("res://scripts/assets/citizen_data_b.gd")
-const CitizenC = preload("res://scripts/assets/citizen_data_c.gd")
-const CitizenD = preload("res://scripts/assets/citizen_data_d.gd")
-const CitizenE = preload("res://scripts/assets/citizen_data_e.gd")
 
 static func create_model(model_name: String) -> MeshInstance3D:
 	var info: Dictionary = _get_model_info(model_name)
@@ -51,6 +46,8 @@ static func create_model(model_name: String) -> MeshInstance3D:
 		surface.add_vertex(vertices[index])
 	surface.generate_normals()
 	var mesh := surface.commit()
+	if mesh == null:
+		return null
 	var material := StandardMaterial3D.new()
 	material.vertex_color_use_as_albedo = true
 	material.vertex_color_is_srgb = true
@@ -74,6 +71,4 @@ static func _get_model_info(model_name: String) -> Dictionary:
 			return {"size": Roads.TRAFFIC_LIGHT_SIZE, "data": Roads.TRAFFIC_LIGHT}
 		"dumpster":
 			return {"size": Roads.DUMPSTER_SIZE, "data": Roads.DUMPSTER}
-		"citizen":
-			return {"size": CitizenA.SIZE, "data": CitizenA.DATA + CitizenB.DATA + CitizenC.DATA + CitizenD.DATA + CitizenE.DATA}
 	return {}
