@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   android:
@@ -74,3 +74,12 @@ jobs:
             build/smoke-test.log
           if-no-files-found: error
           retention-days: 7
+
+      - name: Publish latest APK release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: android-latest
+          name: CITY BOSS Android test build
+          prerelease: true
+          files: build/city-boss-debug.apk
+          overwrite_files: true
