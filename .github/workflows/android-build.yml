@@ -1,0 +1,25 @@
+name: Android Export
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, development]
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3.0
+    steps:
+      - uses: actions/checkout@v4
+      - name: Prepare export directories
+        run: mkdir -p build
+      - name: Import project assets
+        run: godot --headless --editor --path . --quit
+      - name: Export Android APK
+        run: godot --headless --path . --export-debug "Android" build/city-boss-debug.apk
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: city-boss-android-debug
+          path: build/city-boss-debug.apk
