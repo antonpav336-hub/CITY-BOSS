@@ -31,7 +31,8 @@ static func create_model(model_name: String) -> MeshInstance3D:
 		offset += 6
 		vertices[i] = min_bounds + Vector3(qx * bounds_size.x, qy * bounds_size.y, qz * bounds_size.z)
 	for i in range(vertex_count):
-		colors[i] = Color8(raw.decode_u8(offset), raw.decode_u8(offset + 1), raw.decode_u8(offset + 2), 255)
+		var srgb := Color8(raw.decode_u8(offset), raw.decode_u8(offset + 1), raw.decode_u8(offset + 2), 255)
+		colors[i] = srgb.srgb_to_linear()
 		offset += 3
 	var indices := PackedInt32Array()
 	indices.resize(index_count)
@@ -50,7 +51,6 @@ static func create_model(model_name: String) -> MeshInstance3D:
 		return null
 	var material := StandardMaterial3D.new()
 	material.vertex_color_use_as_albedo = true
-	material.vertex_color_is_srgb = true
 	material.roughness = 0.92
 	mesh.surface_set_material(0, material)
 	var instance := MeshInstance3D.new()
