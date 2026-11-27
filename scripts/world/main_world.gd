@@ -6,6 +6,8 @@ const KenneyCityAssets = preload("res://scripts/assets/kenney_city_assets.gd")
 var player: CharacterBody3D
 
 func _ready() -> void:
+	if OS.get_name() == "Android":
+		DisplayServer.screen_set_orientation(DisplayServer.SCREEN_LANDSCAPE)
 	_build_environment()
 	_build_apartment_and_yard()
 	_build_kenney_street()
@@ -48,8 +50,7 @@ func _build_apartment_and_yard() -> void:
 	_add_interaction(Vector3(0, 0.9, 1.4), "Door", "Apartment entrance")
 
 func _build_kenney_street() -> void:
-	# The original Kenney GLB road meshes are compacted into vertex-colour data
-	# so they stay light enough for Android while retaining their actual geometry.
+	# Original Kenney GLB road meshes, compacted to vertex-colour data for Android.
 	var segment_x := [-13.75, -8.25, -2.75, 2.75, 8.25, 13.75]
 	for i in range(segment_x.size()):
 		var model_name := "road-straight"
