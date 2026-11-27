@@ -117,5 +117,8 @@ func _try_interact() -> void:
 func set_move_input(value: Vector2) -> void:
 	move_input = value.limit_length(1.0)
 
+func apply_touch_look(delta: Vector2) -> void:
+	_rotate_camera(delta)
+
 func request_interact() -> void:
 	_try_interact()
