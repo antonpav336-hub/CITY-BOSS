@@ -44,17 +44,92 @@ func _make_collision() -> void:
 	add_child(shape)
 
 func _make_visual() -> void:
-	var body_mesh := MeshInstance3D.new()
-	var capsule := CapsuleMesh.new()
-	capsule.radius = 0.34
-	capsule.height = 1.72
-	body_mesh.mesh = capsule
-	body_mesh.position.y = 0.88
+	# Stylized CITY BOSS protagonist: layered hoodie, cargo trousers,
+	# chestnut textured hair, skin and sneakers. The collision capsule stays separate.
+	var visual := Node3D.new()
+	visual.name = "ProtagonistVisual"
+	add_child(visual)
+
+	var hoodie := _material(Color(0.075, 0.085, 0.105), 0.92)
+	var hoodie_light := _material(Color(0.13, 0.145, 0.17), 0.9)
+	var shirt := _material(Color(0.38, 0.40, 0.43), 0.95)
+	var pants := _material(Color(0.075, 0.105, 0.16), 0.9)
+	var pants_detail := _material(Color(0.12, 0.15, 0.20), 0.95)
+	var skin := _material(Color(0.72, 0.49, 0.36), 0.78)
+	var hair := _material(Color(0.19, 0.105, 0.065), 0.88)
+	var hair_tip := _material(Color(0.48, 0.31, 0.17), 0.82)
+	var shoes := _material(Color(0.82, 0.83, 0.82), 0.72)
+	var sole := _material(Color(0.10, 0.11, 0.13), 0.9)
+	var eyes := _material(Color(0.035, 0.025, 0.02), 0.5)
+
+	# Shoes and legs
+	_add_box(visual, Vector3(0.255, 0.14, 0.40), Vector3(-0.15, 0.12, -0.055), shoes)
+	_add_box(visual, Vector3(0.255, 0.07, 0.405), Vector3(-0.15, 0.055, -0.055), sole)
+	_add_box(visual, Vector3(0.255, 0.14, 0.40), Vector3(0.15, 0.12, -0.055), shoes)
+	_add_box(visual, Vector3(0.255, 0.07, 0.405), Vector3(0.15, 0.055, -0.055), sole)
+	_add_capsule(visual, 0.115, 0.72, Vector3(-0.15, 0.48, 0.0), pants)
+	_add_capsule(visual, 0.115, 0.72, Vector3(0.15, 0.48, 0.0), pants)
+	_add_box(visual, Vector3(0.49, 0.20, 0.30), Vector3(0, 0.78, 0.015), pants)
+	_add_box(visual, Vector3(0.16, 0.19, 0.035), Vector3(-0.245, 0.72, -0.12), pants_detail)
+	_add_box(visual, Vector3(0.16, 0.19, 0.035), Vector3(0.245, 0.72, -0.12), pants_detail)
+
+	# Hoodie torso and hood
+	_add_box(visual, Vector3(0.60, 0.63, 0.34), Vector3(0, 1.22, 0.015), hoodie)
+	_add_box(visual, Vector3(0.29, 0.38, 0.055), Vector3(0, 1.20, -0.184), shirt)
+	_add_sphere(visual, Vector3(0, 1.51, 0.12), Vector3(0.23, 0.25, 0.16), hoodie_light)
+	_add_capsule(visual, 0.075, 0.20, Vector3(0, 1.57, -0.015), skin)
+
+	# Sleeves, cuffs and hands
+	_add_capsule(visual, 0.095, 0.43, Vector3(-0.385, 1.22, 0.015), hoodie, Vector3(0, 0, -13))
+	_add_capsule(visual, 0.095, 0.43, Vector3(0.385, 1.22, 0.015), hoodie, Vector3(0, 0, 13))
+	_add_capsule(visual, 0.082, 0.20, Vector3(-0.43, 0.91, -0.01), hoodie_light, Vector3(0, 0, -8))
+	_add_capsule(visual, 0.082, 0.20, Vector3(0.43, 0.91, -0.01), hoodie_light, Vector3(0, 0, 8))
+	_add_sphere(visual, Vector3(-0.445, 0.79, -0.015), Vector3(0.075, 0.095, 0.07), skin)
+	_add_sphere(visual, Vector3(0.445, 0.79, -0.015), Vector3(0.075, 0.095, 0.07), skin)
+
+	# Head and stylized crop / forward fringe
+	_add_sphere(visual, Vector3(0, 1.76, 0), Vector3(0.19, 0.235, 0.18), skin)
+	_add_sphere(visual, Vector3(0, 1.91, 0.015), Vector3(0.205, 0.12, 0.19), hair)
+	_add_sphere(visual, Vector3(-0.11, 1.84, -0.145), Vector3(0.075, 0.105, 0.075), hair)
+	_add_sphere(visual, Vector3(-0.035, 1.83, -0.17), Vector3(0.07, 0.12, 0.07), hair_tip)
+	_add_sphere(visual, Vector3(0.045, 1.84, -0.17), Vector3(0.075, 0.115, 0.07), hair)
+	_add_sphere(visual, Vector3(0.12, 1.85, -0.14), Vector3(0.07, 0.10, 0.07), hair_tip)
+	_add_sphere(visual, Vector3(-0.195, 1.75, 0.0), Vector3(0.035, 0.055, 0.04), skin)
+	_add_sphere(visual, Vector3(0.195, 1.75, 0.0), Vector3(0.035, 0.055, 0.04), skin)
+	_add_sphere(visual, Vector3(-0.072, 1.78, -0.163), Vector3(0.018, 0.022, 0.012), eyes)
+	_add_sphere(visual, Vector3(0.072, 1.78, -0.163), Vector3(0.018, 0.022, 0.012), eyes)
+
+func _material(color: Color, roughness: float) -> StandardMaterial3D:
 	var mat := StandardMaterial3D.new()
-	mat.albedo_color = Color(0.18, 0.34, 0.52)
-	mat.roughness = 0.75
-	body_mesh.material_override = mat
-	add_child(body_mesh)
+	mat.albedo_color = color
+	mat.roughness = roughness
+	return mat
+
+func _add_box(parent: Node3D, size: Vector3, pos: Vector3, mat: Material) -> void:
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	_add_piece(parent, mesh, pos, mat)
+
+func _add_capsule(parent: Node3D, radius: float, height: float, pos: Vector3, mat: Material, rot: Vector3 = Vector3.ZERO) -> void:
+	var mesh := CapsuleMesh.new()
+	mesh.radius = radius
+	mesh.height = height
+	_add_piece(parent, mesh, pos, mat, rot)
+
+func _add_sphere(parent: Node3D, pos: Vector3, size: Vector3, mat: Material) -> void:
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.5
+	mesh.height = 1.0
+	_add_piece(parent, mesh, pos, mat, Vector3.ZERO, size)
+
+func _add_piece(parent: Node3D, mesh: Mesh, pos: Vector3, mat: Material, rot: Vector3 = Vector3.ZERO, scl: Vector3 = Vector3.ONE) -> void:
+	var instance := MeshInstance3D.new()
+	instance.mesh = mesh
+	instance.position = pos
+	instance.rotation_degrees = rot
+	instance.scale = scl
+	instance.material_override = mat
+	parent.add_child(instance)
 
 func _make_camera() -> void:
 	var pivot := Node3D.new()
@@ -78,7 +153,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		_rotate_camera(event.relative)
 	elif event is InputEventScreenDrag:
-		# Right-half touch drag rotates the camera; left-half is reserved for joystick.
 		if event.position.x > get_viewport().get_visible_rect().size.x * 0.42:
 			_rotate_camera(event.relative)
 	elif event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
